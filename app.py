@@ -1,3 +1,4 @@
+from models import get_user, add_user
 import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 

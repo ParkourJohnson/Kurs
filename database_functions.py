@@ -63,3 +63,32 @@ def delete_user(user_id):
     cursor.execute("DELETE FROM sqlite_sequence WHERE name = 'users'")
     conn.commit()
     conn.close()
+
+def get_application_types():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM application_types")
+    types = cursor.fetchall()
+    conn.close()
+    return types
+
+def add_type(name, description):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    try:
+        cursor.execute("INSERT INTO application_types (name, description) VALUES (?, ?)", (name, description))
+        conn.commit()
+    except sqlite3.IntegrityError:
+        return False
+    finally:
+        conn.close()
+    return True
+
+def delete_type(type_id):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM application_types WHERE id = ?", (type_id,))
+    conn.commit()
+    cursor.execute("DELETE FROM sqlite_sequence WHERE name = 'application_types'")
+    conn.commit()
+    conn.close()

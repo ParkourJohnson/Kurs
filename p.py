@@ -8,7 +8,7 @@ conn = sqlite3.connect("imsit.db")
 cursor = conn.cursor()
 
 # Выполните SQL-запрос для выбора всех строк из таблицы
-cursor.execute("SELECT * FROM users")
+cursor.execute("SELECT * FROM application_types")
 
 # Получите все строки из результата запроса
 rows = cursor.fetchall()

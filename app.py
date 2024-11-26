@@ -1,4 +1,4 @@
-from models import *
+from database_functions import *
 import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 
@@ -113,6 +113,38 @@ def delete_user_page(user_id):
     delete_user(user_id)
     flash("Пользователь удален.", "info")
     return redirect(url_for("manage_users"))
+
+@app.route('/admin/application-types')
+def application_types():
+    if session.get("role") != "admin":
+        return redirect(url_for("index"))
+
+    types = get_application_types()
+    return render_template('application_types.html', types=types)
+
+@app.route('/admin/application-types/add', methods=['POST'])
+def add_application_type():
+    if session.get("role") != "admin":
+        return redirect(url_for("index"))
+
+    name = request.form['name']
+    description = request.form.get('description', '')
+    if not name:
+        flash("Название типа заявления обязательно!", "error")
+        return redirect(url_for('application_types'))
+
+    if (add_type(name, description)):
+        flash("Новый тип заявления добавлен!", "success")
+        return redirect(url_for('application_types'))
+    else:
+        flash("Ошибка при добавлении типа")
+        return redirect(url_for('application_types'))
+
+@app.route('/admin/application-types/delete/<int:type_id>')
+def delete_application_type(type_id):
+    delete_type(type_id)
+    flash("Тип заявления удален!", "success")
+    return redirect(url_for('application_types'))
 
 if __name__ == "__main__":
     app.run(debug=True)

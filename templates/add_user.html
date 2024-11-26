@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить пользователя{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Добавить пользователя</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label for="username">Имя пользователя</label>
+            <input type="text" id="username" name="username" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Пароль</label>
+            <input type="password" id="password" name="password" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="role">Роль</label>
+            <select id="role" name="role" class="form-control">
+                <option value="admin">Администратор</option>
+                <option value="staff">Сотрудник</option>
+                <option value="student">Студент</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success">Сохранить</button>
+    </form>
+</div>
+{% endblock %}

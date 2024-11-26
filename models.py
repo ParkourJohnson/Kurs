@@ -21,3 +21,41 @@ def add_user(username, password, role):
     finally:
         conn.close()
     return True
+
+def get_all_users():
+    """Получить список всех пользователей."""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, username, role FROM users")
+    users = cursor.fetchall()
+    conn.close()
+    return users
+
+def get_user_by_id(user_id):
+    """Получить данные пользователя по ID."""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, username, role FROM users WHERE id = ?", (user_id,))
+    user = cursor.fetchone()
+    conn.close()
+    return user
+
+def update_user(user_id, username, password, role):
+    """Обновить данные пользователя."""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE users
+        SET username = ?, password = ?, role = ?
+        WHERE id = ?
+    """, (username, password, role, user_id))
+    conn.commit()
+    conn.close()
+
+def delete_user(user_id):
+    """Удалить пользователя."""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
+    conn.commit()
+    conn.close()

@@ -1,4 +1,4 @@
-from models import get_user, add_user
+from models import *
 import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 
@@ -60,6 +60,59 @@ def student_dashboard():
     if session.get("role") == "student":
         return render_template("student_dashboard.html")
     return redirect(url_for("index"))
+
+@app.route("/admin/users")
+def manage_users():
+    if session.get("role") != "admin":
+        return redirect(url_for("index"))
+    users = get_all_users()
+    return render_template("admin_users.html", users=users)
+
+@app.route("/admin/users/add", methods=["GET", "POST"])
+def add_user_page():
+    if session.get("role") != "admin":
+        return redirect(url_for("index"))
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        role = request.form.get("role")
+
+        if add_user(username, password, role):
+            flash("Пользователь добавлен!", "success")
+            return redirect(url_for("manage_users"))
+        else:
+            flash("Ошибка: пользователь с таким именем уже существует.", "danger")
+    return render_template("add_user.html")
+
+@app.route("/admin/users/edit/<int:user_id>", methods=["GET", "POST"])
+def edit_user_page(user_id):
+    if session.get("role") != "admin":
+        return redirect(url_for("index"))
+
+    user = get_user_by_id(user_id)
+    if not user:
+        flash("Пользователь не найден.", "danger")
+        return redirect(url_for("manage_users"))
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        role = request.form.get("role")
+
+        update_user(user_id, username, password, role)
+        flash("Данные пользователя обновлены.", "success")
+        return redirect(url_for("manage_users"))
+    return render_template("edit_user.html", user=user)
+
+@app.route("/admin/users/delete/<int:user_id>")
+def delete_user_page(user_id):
+    if session.get("role") != "admin":
+        return redirect(url_for("index"))
+
+    delete_user(user_id)
+    flash("Пользователь удален.", "info")
+    return redirect(url_for("manage_users"))
 
 if __name__ == "__main__":
     app.run(debug=True)

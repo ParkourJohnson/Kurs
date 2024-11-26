@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Редактировать пользователя{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Редактировать пользователя</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label for="username">Имя пользователя</label>
+            <input type="text" id="username" name="username" class="form-control" value="{{ user[1] }}" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Пароль</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Оставьте пустым для сохранения текущего">
+        </div>
+        <div class="form-group">
+            <label for="role">Роль</label>
+            <select id="role" name="role" class="form-control">
+                <option value="admin" {% if user[2] == 'admin' %}selected{% endif %}>Администратор</option>
+                <option value="staff" {% if user[2] == 'staff' %}selected{% endif %}>Сотрудник</option>
+                <option value="student" {% if user[2] == 'student' %}selected{% endif %}>Студент</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success">Сохранить изменения</button>
+        <a href="{{ url_for('manage_users') }}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

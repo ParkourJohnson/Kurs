@@ -53,9 +53,13 @@ def update_user(user_id, username, password, role):
     conn.close()
 
 def delete_user(user_id):
-    """Удалить пользователя."""
+    """Удалить пользователя и сбросить автоинкремент."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
+    # Удаляем пользователя
     cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
+    conn.commit()
+    # Сбрасываем автоинкремент
+    cursor.execute("DELETE FROM sqlite_sequence WHERE name = 'users'")
     conn.commit()
     conn.close()

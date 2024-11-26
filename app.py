@@ -5,14 +5,6 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 app = Flask(__name__)
 app.secret_key = "secret_key_for_session"
 
-def get_user(username):
-    conn = sqlite3.connect("imsit.db")
-    cursor = conn.cursor()
-    cursor.execute("SELECT username, password, role FROM users WHERE username = ?", (username,))
-    user = cursor.fetchone()
-    conn.close()
-    return user
-
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -142,6 +134,9 @@ def add_application_type():
 
 @app.route('/admin/application-types/delete/<int:type_id>')
 def delete_application_type(type_id):
+    if session.get("role") != "admin":
+        return redirect(url_for("index"))
+    
     delete_type(type_id)
     flash("Тип заявления удален!", "success")
     return redirect(url_for('application_types'))

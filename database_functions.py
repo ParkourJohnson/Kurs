@@ -92,3 +92,13 @@ def delete_type(type_id):
     cursor.execute("DELETE FROM sqlite_sequence WHERE name = 'application_types'")
     conn.commit()
     conn.close()
+
+def create_application(student_id, type_id, comments, file_path):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO applications (student_id, type_id, comments, file_path)
+        VALUES (?, ?, ?, ?)
+    """, (student_id, type_id, comments, file_path))
+    conn.commit()
+    conn.close()

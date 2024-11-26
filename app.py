@@ -1,9 +1,14 @@
+import os
 from database_functions import *
-import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, flash, session
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = "secret_key_for_session"
+
+UPLOAD_FOLDER = 'uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route("/")
 def index():
@@ -140,6 +145,39 @@ def delete_application_type(type_id):
     delete_type(type_id)
     flash("Тип заявления удален!", "success")
     return redirect(url_for('application_types'))
+
+@app.route('/student/apply')
+def apply_form():
+    if  session.get('role') != 'student':
+        flash('Доступ запрещен!')
+        return redirect(url_for('login'))
+
+    application_types = get_application_types()
+
+    return render_template('apply.html', application_types=application_types)
+
+# Маршрут для обработки формы подачи заявления
+@app.route('/student/apply/submit', methods=['POST'])
+def apply_submit():
+    if session.get('role') != 'student':
+        flash('Доступ запрещен!')
+        return redirect(url_for('login'))
+
+    student_id = get_user(session['username'])[0]
+    type_id = request.form.get('type_id')
+    comments = request.form.get('comments')
+    file = request.files['file']
+
+    file_path = None
+    if file and file.filename:
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
+
+    create_application(student_id, type_id, comments, file_path)
+
+    flash('Заявление успешно подано!')
+    return redirect(url_for('apply_form'))
 
 if __name__ == "__main__":
     app.run(debug=True)

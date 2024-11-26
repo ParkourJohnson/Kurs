@@ -1,13 +1,16 @@
+import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 
 app = Flask(__name__)
 app.secret_key = "secret_key_for_session"
 
-users = {
-    "admin": {"password": "admin123", "role": "admin"},
-    "staff": {"password": "staff123", "role": "staff"},
-    "student": {"password": "student123", "role": "student"},
-}
+def get_user(username):
+    conn = sqlite3.connect("imsit.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT username, password, role FROM users WHERE username = ?", (username,))
+    user = cursor.fetchone()
+    conn.close()
+    return user
 
 @app.route("/")
 def index():
@@ -18,16 +21,16 @@ def login():
     username = request.form.get("username")
     password = request.form.get("password")
 
-    user = users.get(username)
-    if user and user["password"] == password:
+    user = get_user(username)
+    if user and user[1] == password:
         session["username"] = username
-        session["role"] = user["role"]
+        session["role"] = user[2]
         flash("Вы успешно вошли!", "success")
-        if user["role"] == "admin":
+        if user[2] == "admin":
             return redirect(url_for("admin_dashboard"))
-        elif user["role"] == "staff":
+        elif user[2] == "staff":
             return redirect(url_for("staff_dashboard"))
-        elif user["role"] == "student":
+        elif user[2] == "student":
             return redirect(url_for("student_dashboard"))
     else:
         flash("Неверный логин или пароль.", "danger")

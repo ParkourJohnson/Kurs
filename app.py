@@ -21,15 +21,15 @@ def login():
     password = request.form.get("password")
 
     user = get_user(username)
-    if user and user[1] == password:
+    if user and user[2] == password:
         session["username"] = username
-        session["role"] = user[2]
+        session["role"] = user[3]
         flash("Вы успешно вошли!", "success")
-        if user[2] == "admin":
+        if user[3] == "admin":
             return redirect(url_for("admin_dashboard"))
-        elif user[2] == "staff":
+        elif user[3] == "staff":
             return redirect(url_for("staff_dashboard"))
-        elif user[2] == "student":
+        elif user[3] == "student":
             return redirect(url_for("student_dashboard"))
     else:
         flash("Неверный логин или пароль.", "danger")

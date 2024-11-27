@@ -102,3 +102,23 @@ def create_application(student_id, type_id, comments, file_path):
     """, (student_id, type_id, comments, file_path))
     conn.commit()
     conn.close()
+
+def get_applications_by_id(student_id):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT 
+            a.id, 
+            t.name AS type_name, 
+            a.comments, 
+            a.file_path, 
+            a.status, 
+            a.created_at 
+        FROM applications AS a
+        JOIN application_types AS t ON a.type_id = t.id
+        WHERE a.student_id = ? 
+        ORDER BY a.created_at DESC
+    """, (student_id,))
+    applications = cursor.fetchall()
+    conn.close()
+    return applications

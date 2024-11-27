@@ -1,4 +1,5 @@
 import os
+from flask import send_from_directory
 from database_functions import *
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from werkzeug.utils import secure_filename
@@ -178,6 +179,22 @@ def apply_submit():
 
     flash('Заявление успешно подано!')
     return redirect(url_for('apply_form'))
+
+@app.route('/student/my_applications')
+def my_applications():
+    if session.get('role') != 'student':
+        flash('Доступ запрещен!')
+        return redirect(url_for('login'))
+
+    student_id = get_user(session['username'])[0]
+    
+    applications = get_applications_by_id(student_id)
+
+    return render_template('my_applications.html', applications=applications)
+
+@app.route('/uploads/<path:filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 if __name__ == "__main__":
     app.run(debug=True)

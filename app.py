@@ -175,7 +175,7 @@ def apply_submit():
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
 
-    create_application(student_id, type_id, comments, file_path)
+    create_application(student_id, type_id, comments, filename)
 
     flash('Заявление успешно подано!')
     return redirect(url_for('apply_form'))
@@ -195,6 +195,69 @@ def my_applications():
 @app.route('/uploads/<path:filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@app.route('/staff/applications', methods=['GET', 'POST'])
+def staff_applications():
+    if session.get('role') != 'staff':
+        flash('Доступ запрещен!')
+        return redirect(url_for('index'))
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    if request.method == 'POST':
+        application_id = request.form.get('application_id')
+        new_status = request.form.get('status')
+        comment = request.form.get('comment')
+        file = request.files.get('file')
+
+        if application_id:
+            if new_status:
+                cursor.execute(
+                    "UPDATE applications SET status = ? WHERE id = ?", 
+                    (new_status, application_id)
+                )
+            if comment:
+                cursor.execute(
+                    "UPDATE applications SET comments = ? WHERE id = ?", 
+                    (comment, application_id)
+                )
+            if file:
+                filename = secure_filename(file.filename)
+                filepath = os.path.join('uploads', filename)
+                file.save(filepath)
+                cursor.execute(
+                    "UPDATE applications SET file_path = ? WHERE id = ?", 
+                    (filename, application_id)
+                )
+            conn.commit()
+            flash('Изменения успешно сохранены', 'success')
+
+        return redirect(url_for('staff_applications'))
+
+    cursor.execute("""
+        SELECT 
+            a.id, 
+            u.username AS student_name, 
+            t.name AS type_name, 
+            a.status, 
+            a.comments, 
+            a.file_path, 
+            a.created_at
+        FROM 
+            applications a
+        JOIN 
+            users u ON a.student_id = u.id
+        JOIN 
+            application_types t ON a.type_id = t.id
+        ORDER BY 
+            a.created_at DESC
+    """)
+    applications = cursor.fetchall()
+
+    conn.close()
+
+    return render_template('staff_applications.html', applications=applications)
 
 if __name__ == "__main__":
     app.run(debug=True)

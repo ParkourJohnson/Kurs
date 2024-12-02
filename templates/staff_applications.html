@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Заявления студентов{% endblock %}
+
+{% block content %}
+<h2 class="text-center">Заявления студентов</h2>
+<table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>#</th>
+            <th>Студент</th>
+            <th>Тип</th>
+            <th>Статус</th>
+            <th>Дата подачи</th>
+            <th>Комментарий</th>
+            <th>Файл</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for app in applications %}
+        <tr>
+            <td>{{ app[0] }}</td>
+            <td>{{ app[1] }}</td>
+            <td>{{ app[2] }}</td>
+            <td>{{ app[3] }}</td>
+            <td>{{ app[6] }}</td>
+            <td>{{ app[4] or '—' }}</td>
+            <td>
+                {% if app[5] %}
+                <a href="{{ url_for('uploaded_file', filename=app[5]) }}" target="_blank" class="btn btn-sm btn-primary" download>Скачать</a>
+                {% else %}
+                <span class="text-muted">Нет файла</span>
+                {% endif %}
+            </td>
+            <td>
+                <form method="POST" enctype="multipart/form-data" class="form-inline">
+                    <input type="hidden" name="application_id" value="{{ app[0] }}">
+                    <select name="status" class="form-select mr-2">
+                        <option value="В процессе" {% if app[3] == "В процессе" %}selected{% endif %}>В процессе</option>
+                        <option value="Принято" {% if app[3] == "Принято" %}selected{% endif %}>Принято</option>
+                        <option value="Отклонено" {% if app[3] == "Отклонено" %}selected{% endif %}>Отклонено</option>
+                    </select>
+                    <input type="text" name="comment" placeholder="Комментарий" class="form-control form-control-sm mr-2">
+                    <input type="file" name="file" class="form-control-file mr-2">
+                    <button type="submit" class="btn btn-primary btn-sm">Сохранить</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

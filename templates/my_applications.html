@@ -25,7 +25,7 @@
                 <td>{{ application[5] }}</td>
                 <td>
                     {% if application[3] %}
-                    <a href="/{{ application[3] }}" class="btn btn-sm btn-primary" download>Скачать файл</a>
+                    <a href="{{ url_for('uploaded_file', filename=application[3]) }}" class="btn btn-sm btn-primary" download>Скачать файл</a>
                     {% else %}
                     <span class="text-muted">Нет файла</span>
                     {% endif %}

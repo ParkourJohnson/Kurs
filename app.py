@@ -45,24 +45,28 @@ def logout():
 def admin_dashboard():
     if session.get("role") == "admin":
         return render_template("admin_dashboard.html")
+    
     return redirect(url_for("index"))
 
 @app.route("/staff")
 def staff_dashboard():
     if session.get("role") == "staff":
         return render_template("staff_dashboard.html")
+    
     return redirect(url_for("index"))
 
 @app.route("/student")
 def student_dashboard():
     if session.get("role") == "student":
         return render_template("student_dashboard.html")
+    
     return redirect(url_for("index"))
 
 @app.route("/admin/users")
 def manage_users():
     if session.get("role") != "admin":
         return redirect(url_for("index"))
+    
     users = get_all_users()
     return render_template("admin_users.html", users=users)
 
@@ -151,18 +155,17 @@ def delete_application_type(type_id):
 def apply_form():
     if  session.get('role') != 'student':
         flash('Доступ запрещен!')
-        return redirect(url_for('login'))
+        return redirect(url_for('index'))
 
     application_types = get_application_types()
 
     return render_template('apply.html', application_types=application_types)
 
-# Маршрут для обработки формы подачи заявления
 @app.route('/student/apply/submit', methods=['POST'])
 def apply_submit():
     if session.get('role') != 'student':
         flash('Доступ запрещен!')
-        return redirect(url_for('login'))
+        return redirect(url_for('index'))
 
     student_id = get_user(session['username'])[0]
     type_id = request.form.get('type_id')
@@ -184,7 +187,7 @@ def apply_submit():
 def my_applications():
     if session.get('role') != 'student':
         flash('Доступ запрещен!')
-        return redirect(url_for('login'))
+        return redirect(url_for('index'))
 
     student_id = get_user(session['username'])[0]
     
@@ -194,6 +197,9 @@ def my_applications():
 
 @app.route('/uploads/<path:filename>')
 def uploaded_file(filename):
+    if not session.get('role'):
+        return redirect(url_for('index'))
+
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/staff/applications', methods=['GET', 'POST'])

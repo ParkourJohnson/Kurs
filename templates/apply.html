@@ -2,27 +2,34 @@
 
 {% block content %}
 <div id="apply-container" class="container mt-5">
-    <h2>Подача заявления</h2>
-    <form method="post" action="{{ url_for('apply_submit') }}" enctype="multipart/form-data">
-        <div class="form-group mb-3">
-            <label for="type_id" class="form-label">Тип заявления</label>
-            <select class="form-select" name="type_id" id="type_id" required>
-                {% for type in application_types %}
-                <option value="{{ type[0] }}">{{ type[1] }}</option>
-                {% endfor %}
-            </select>
+    <div class="card shadow">
+        <div class="card-header text-white bg-primary">
+            <h3 class="text-center mb-0">Подача заявления</h3>
         </div>
-        <div class="form-group mb-3">
-            <label for="comments" class="form-label">Комментарий</label>
-            <textarea class="form-control" name="comments" id="comments" rows="3"></textarea>
+        <div class="card-body">
+            <form method="post" action="{{ url_for('apply_submit') }}" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="type_id" class="form-label fw-bold">Тип заявления</label>
+                    <select class="form-select" name="type_id" id="type_id" required>
+                        {% for type in application_types %}
+                        <option value="{{ type[0] }}">{{ type[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="comments" class="form-label fw-bold">Комментарий</label>
+                    <textarea class="form-control" name="comments" id="comments" rows="3" placeholder="Введите комментарий"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="file" class="form-label fw-bold">Загрузить файл</label>
+                    <input class="form-control" type="file" name="file" id="file">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Подать заявление</button>
+            </form>
         </div>
-        <div class="form-group mb-3">
-            <label for="file" class="form-label">Загрузить файл</label>
-            <input class="form-control" type="file" name="file" id="file">
+        <div class="card-footer text-center">
+            <a href="/student" class="btn btn-secondary mt-3">Вернуться в панель управления</a>
         </div>
-        <button type="submit" class="btn btn-primary">Подать заявление</button>
-    </form>
+    </div>
 </div>
-
-<a href="/student" class="btn btn-secondary mt-4">Вернуться в панель управления</a>
 {% endblock %}

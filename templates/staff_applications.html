@@ -36,16 +36,26 @@
             <td>
                 <form method="POST" enctype="multipart/form-data" class="form-inline">
                     <input type="hidden" name="application_id" value="{{ app[0] }}">
-                    <select name="status" class="form-select mr-2">
-                        <option value="В процессе" {% if app[3] == "В процессе" %}selected{% endif %}>В процессе</option>
-                        <option value="Принято" {% if app[3] == "Принято" %}selected{% endif %}>Принято</option>
-                        <option value="Отклонено" {% if app[3] == "Отклонено" %}selected{% endif %}>Отклонено</option>
-                    </select>
-                    <input type="text" name="comment" placeholder="Комментарий" class="form-control form-control-sm mr-2">
-                    <input type="file" name="file" class="form-control-file mr-2">
+                    
+                    <div class="form-group mb-3">
+                        <select name="status" class="form-select">
+                            <option value="В процессе" {% if app[3] == "В процессе" %}selected{% endif %}>В процессе</option>
+                            <option value="Принято" {% if app[3] == "Принято" %}selected{% endif %}>Принято</option>
+                            <option value="Отклонено" {% if app[3] == "Отклонено" %}selected{% endif %}>Отклонено</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <input type="text" name="comment" placeholder="Комментарий" class="form-control form-control-sm">
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <input type="file" name="file" class="form-control-file">
+                    </div>
+                    
                     <button type="submit" class="btn btn-primary btn-sm">Сохранить</button>
                 </form>
-            </td>
+            </td>            
         </tr>
         {% endfor %}
     </tbody>

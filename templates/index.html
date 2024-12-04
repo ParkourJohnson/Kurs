@@ -3,15 +3,32 @@
 {% block title %}Главная{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2>Добро пожаловать в систему регистрации и учета заявлений студентов ИМСИТ</h2>
-    <p>Войдите в свою учетную запись, чтобы начать работу.</p>
-    <form action="/login" method="post" class="login-form">
-        <label for="username">Логин:</label>
-        <input type="text" id="username" name="username" required>
-        <label for="password">Пароль:</label>
-        <input type="password" id="password" name="password" required>
-        <button type="submit">Войти</button>
-    </form>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header text-center bg-primary text-white">
+                    <h2>Добро пожаловать</h2>
+                </div>
+                <div class="card-body">
+                    <p class="text-center mb-4">Войдите в свою учетную запись, чтобы начать работу.</p>
+                    <form action="/login" method="post">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Логин</label>
+                            <input type="text" id="username" name="username" class="form-control" placeholder="Введите ваш логин" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Пароль</label>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Введите ваш пароль" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Войти</button>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <small class="text-muted">© 2024 Система регистрации и учета заявлений студентов ИМСИТ</small>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

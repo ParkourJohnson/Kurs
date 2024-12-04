@@ -145,3 +145,131 @@ body {
 .alert-container {
     margin-bottom: 20px;
 }
+
+body {
+    background-color: #e9ecef;
+    color: #333;
+    font-family: 'Arial', sans-serif;
+}
+
+.card {
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.card-header {
+    background: linear-gradient(90deg, #0056b3, #00376d);
+    text-align: center;
+}
+
+.card-header h3 {
+    font-size: 1.75rem;
+    font-weight: bold;
+}
+
+.card-body p {
+    font-size: 1.125rem;
+    color: #555;
+}
+
+.btn {
+    border-radius: 50px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.card {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background: linear-gradient(90deg, #0056b3, #00376d);
+    color: white;
+}
+
+.btn {
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-primary {
+    background-color: #0069d9;
+    border-color: #0062cc;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+.form-control {
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.mb-3 {
+    margin-bottom: 1rem !important;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group select, 
+.form-group input[type="text"], 
+.form-group input[type="file"] {
+    width: 100%;
+}
+
+.form-inline .form-group {
+    margin-right: 10px;
+}
+
+.table td form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.table td form button {
+    align-self: flex-start;
+    margin-top: 10px;
+}

@@ -280,3 +280,7 @@ body {
     max-width: 200px !important;
     white-space: normal !important;
 }
+
+.card-header h2 {
+    color: white !important;
+}

@@ -177,10 +177,11 @@ def apply_submit():
         filename = secure_filename(file.filename)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
+        create_application(student_id, type_id, comments, filename)
+    else:
+        create_application(student_id, type_id, comments, None)
 
-    create_application(student_id, type_id, comments, filename)
-
-    flash('Заявление успешно подано!')
+    flash('Заявление успешно подано!', "success")
     return redirect(url_for('apply_form'))
 
 @app.route('/student/my_applications')

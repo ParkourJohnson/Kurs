@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import datetime
 
 DB_PATH = "imsit.db"
 
@@ -97,9 +98,9 @@ def create_application(student_id, type_id, comments, file_path):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute("""
-        INSERT INTO applications (student_id, type_id, comments, file_path)
-        VALUES (?, ?, ?, ?)
-    """, (student_id, type_id, comments, file_path))
+        INSERT INTO applications (student_id, type_id, comments, file_path, created_at)
+        VALUES (?, ?, ?, ?, ?)
+    """, (student_id, type_id, comments, file_path, datetime.now().strftime('%Y-%m-%d %H:%M')))
     conn.commit()
     conn.close()
 

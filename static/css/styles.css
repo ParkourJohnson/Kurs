@@ -273,3 +273,10 @@ body {
     align-self: flex-start;
     margin-top: 10px;
 }
+
+.table td {
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    max-width: 200px !important;
+    white-space: normal !important;
+}

@@ -4,7 +4,7 @@ conn = sqlite3.connect("imsit.db")
 
 cursor = conn.cursor()
 
-cursor.execute("SELECT * FROM applications")
+cursor.execute("SELECT * FROM users")
 
 rows = cursor.fetchall()
 

@@ -266,5 +266,26 @@ def staff_applications():
 
     return render_template('staff_applications.html', applications=applications)
 
+@app.route('/student/add_email', methods=['GET', 'POST'])
+def add_email():
+    if request.method == 'POST':
+        if session['role'] != 'student':
+            flash('Доступ запрещен')
+            return redirect('/login')
+
+        email = request.form['email']
+        user_id = get_user(session['username'])[0]
+
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("UPDATE users SET email = ? WHERE id = ?", (email, user_id))
+        conn.commit()
+        conn.close()
+
+        flash('Email успешно сохранён!', 'success')
+        return redirect(url_for('student_dashboard'))
+    
+    return render_template('add_email.html')
+
 if __name__ == "__main__":
     app.run(debug=True)

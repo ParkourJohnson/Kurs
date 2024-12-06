@@ -3,6 +3,7 @@ from flask import send_from_directory
 from database_functions import *
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from werkzeug.utils import secure_filename
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
 app.secret_key = "secret_key_for_session"
@@ -10,6 +11,23 @@ app.secret_key = "secret_key_for_session"
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+app.config['MAIL_SERVER'] = 'smtp.mail.ru'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = 'petrovich-bomzh45@bk.ru'
+app.config['MAIL_PASSWORD'] = 'g0H7WysQP9fRciAJTG91'
+app.config['MAIL_DEFAULT_SENDER'] = ('IMSIT', 'petrovich-bomzh45@bk.ru')
+mail = Mail(app)
+
+def send_email(to_email, subject, body):
+    msg = Message(subject, recipients=[to_email])
+    msg.body = body
+    try:
+        mail.send(msg)
+        return True
+    except Exception:
+        return False
 
 @app.route("/")
 def index():
@@ -218,6 +236,11 @@ def staff_applications():
         comment = request.form.get('comment')
         file = request.files.get('file')
 
+        cursor.execute("SELECT student_id from applications where id = ?", (str(application_id)))
+        student_id = cursor.fetchone()[0]
+        cursor.execute("SELECT email from users where id = ?", str(student_id))
+        email = cursor.fetchone()[0]
+
         if application_id:
             if new_status:
                 cursor.execute(
@@ -239,6 +262,14 @@ def staff_applications():
                 )
             conn.commit()
             flash('Изменения успешно сохранены', 'success')
+
+            subject = "Ваше заявление было обработано"
+            body = "Работник вуза ответил на заявление которое вы оставили"
+
+            if (send_email(email, subject, body)):
+                flash("Уведомление успешно доставлено студенту", "success")
+            else:
+                flash("Уведомление не было доставлено студенту", "danger")
 
         return redirect(url_for('staff_applications'))
 
@@ -268,11 +299,11 @@ def staff_applications():
 
 @app.route('/student/add_email', methods=['GET', 'POST'])
 def add_email():
+    if session.get('role') != 'student':
+            flash('Доступ запрещен', 'danger')
+            return redirect(url_for('index'))
+    
     if request.method == 'POST':
-        if session['role'] != 'student':
-            flash('Доступ запрещен')
-            return redirect('/login')
-
         email = request.form['email']
         user_id = get_user(session['username'])[0]
 

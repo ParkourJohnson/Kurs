@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Подтверждение e-mail{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow-sm p-4" style="max-width: 400px; width: 100%;">
+        <div class="card-header text-center">
+            <h3>Подтверждение e-mail</h3>
+        </div>
+        <div class="card-body">
+            <p class="text-muted text-center">Введите код подтверждения, отправленный на вашу почту.</p>
+            <form action="{{ url_for('email_verification') }}" method="POST">
+                <div class="mb-3">
+                    <label for="code" class="form-label">Код подтверждения</label>
+                    <input type="text" id="code" name="code" class="form-control" placeholder="Введите код" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Подтвердить</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

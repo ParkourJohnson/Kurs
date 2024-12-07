@@ -1,3 +1,5 @@
+import random
+import string
 import os
 from flask import send_from_directory
 from database_functions import *
@@ -19,6 +21,9 @@ app.config['MAIL_USERNAME'] = 'petrovich-bomzh45@bk.ru'
 app.config['MAIL_PASSWORD'] = 'g0H7WysQP9fRciAJTG91'
 app.config['MAIL_DEFAULT_SENDER'] = ('IMSIT', 'petrovich-bomzh45@bk.ru')
 mail = Mail(app)
+
+def generate_verification_code():
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
 
 def send_email(to_email, subject, body):
     msg = Message(subject, recipients=[to_email])
@@ -224,7 +229,7 @@ def uploaded_file(filename):
 @app.route('/staff/applications', methods=['GET', 'POST'])
 def staff_applications():
     if session.get('role') != 'staff':
-        flash('Доступ запрещен!')
+        flash('Доступ запрещен!', 'danger')
         return redirect(url_for('index'))
 
     conn = sqlite3.connect(DB_PATH)
@@ -305,18 +310,75 @@ def add_email():
     
     if request.method == 'POST':
         email = request.form['email']
+        verification_code = generate_verification_code()
+        user_id = get_user(session['username'])[0]
+
+        subject = "Код подтверждения"
+        body = f"Вот ваш код подтверждения для привязки электронной почти к аккаунту {verification_code}"
+
+        if (send_email(email, subject, body)):
+            conn = sqlite3.connect(DB_PATH)
+            cursor = conn.cursor()
+
+            cursor.execute("""INSERT INTO email_verification_codes (user_id, code, email)
+            VALUES (?, ?, ?);""", (user_id, verification_code, email))
+
+            conn.commit()
+
+            conn.close()
+
+            flash('Пожалуйста введите код подтверждения', 'info')
+            return redirect(url_for('email_verification'))
+        else:
+            flash("Ошибка при отправке кода подтверждения", "danger")
+            return redirect(url_for('add_email'))
+    
+    return render_template('add_email.html')
+
+@app.route('/student/add_email/email_verification', methods = ['GET', 'POST'])
+def email_verification():
+    if session.get('role') != 'student':
+            flash('Доступ запрещен', 'danger')
+            return redirect(url_for('index'))
+    
+    if request.method == 'POST':
+        code = request.form['code']
         user_id = get_user(session['username'])[0]
 
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
-        cursor.execute("UPDATE users SET email = ? WHERE id = ?", (email, user_id))
-        conn.commit()
-        conn.close()
 
-        flash('Email успешно сохранён!', 'success')
-        return redirect(url_for('student_dashboard'))
-    
-    return render_template('add_email.html')
+        cursor.execute("select code, email from email_verification_codes where user_id = ?", str(user_id))
+
+        query = cursor.fetchone()
+
+        user_code = query[0]
+        email = query[1]
+
+        if (user_code == code):
+            cursor.execute("""
+            UPDATE users
+            SET email = ?,
+            email_verified = TRUE
+            WHERE id = ?;""", (email, user_id))
+
+            conn.commit()
+
+            cursor.execute("""
+                DELETE FROM email_verification_codes
+                WHERE user_id = ?;""", str(user_id))
+
+            conn.commit()
+
+            conn.close()
+
+            flash("Почта успешно привязана к аккаунту", 'success')
+            return redirect(url_for('student_dashboard'))
+        else:
+            flash("Неверный код подтверждения", "danger")
+            return redirect(url_for('email_verification'))
+
+    return render_template('email_verification.html')
 
 if __name__ == "__main__":
     app.run(debug=True)

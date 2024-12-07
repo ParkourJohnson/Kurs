@@ -1,14 +1,16 @@
 import sqlite3
 
+query = """
+ALTER TABLE email_verification_codes
+ADD COLUMN email TEXT;
+"""
+
 conn = sqlite3.connect("imsit.db")
 
 cursor = conn.cursor()
 
-cursor.execute("SELECT * FROM users")
+cursor.execute(query)
 
-rows = cursor.fetchall()
-
-for row in rows:
-    print(row)
+conn.commit()
 
 conn.close()

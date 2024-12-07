@@ -12,18 +12,26 @@
                     <label for="type_id" class="form-label fw-bold">Тип заявления</label>
                     <select class="form-select" name="type_id" id="type_id" required>
                         {% for type in application_types %}
-                        <option value="{{ type[0] }}">{{ type[1] }}</option>
+                        <option value="{{ type[0] }}" data-description="{{ type[2] }}">{{ type[1] }}</option>
                         {% endfor %}
                     </select>
                 </div>
+                
+                <div class="mb-3" id="description-container">
+                    <label class="form-label fw-bold">Описание</label>
+                    <p id="description-text" class="text-muted">Выберите тип заявления для отображения описания.</p>
+                </div>
+                
                 <div class="mb-3">
                     <label for="comments" class="form-label fw-bold">Комментарий</label>
                     <textarea class="form-control" name="comments" id="comments" rows="3" placeholder="Введите комментарий"></textarea>
                 </div>
+                
                 <div class="mb-3">
                     <label for="file" class="form-label fw-bold">Загрузить файл</label>
                     <input class="form-control" type="file" name="file" id="file">
                 </div>
+                
                 <button type="submit" class="btn btn-primary w-100">Подать заявление</button>
             </form>
         </div>
@@ -32,4 +40,20 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Скрипт для обновления описания при изменении типа заявления
+    document.getElementById('type_id').addEventListener('change', function() {
+        var selectedOption = this.options[this.selectedIndex];
+        var description = selectedOption.getAttribute('data-description');
+        document.getElementById('description-text').textContent = description || 'Описание не доступно.';
+    });
+
+    // Инициализация начального описания
+    document.addEventListener('DOMContentLoaded', function() {
+        var selectedOption = document.getElementById('type_id').options[document.getElementById('type_id').selectedIndex];
+        var description = selectedOption.getAttribute('data-description');
+        document.getElementById('description-text').textContent = description || 'Выберите тип заявления для отображения описания.';
+    });
+</script>
 {% endblock %}

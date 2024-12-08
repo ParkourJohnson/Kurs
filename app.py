@@ -278,24 +278,27 @@ def staff_applications():
 
         return redirect(url_for('staff_applications'))
 
-    cursor.execute("""
-        SELECT 
-            a.id, 
-            u.username AS student_name, 
-            t.name AS type_name, 
-            a.status, 
-            a.comments, 
-            a.file_path, 
-            a.created_at
-        FROM 
-            applications a
-        JOIN 
-            users u ON a.student_id = u.id
-        JOIN 
-            application_types t ON a.type_id = t.id
-        ORDER BY 
-            a.created_at DESC
-    """)
+    status_filter = request.args.get('status')
+    student_name_filter = request.args.get('student_name')
+
+    query = "SELECT a.id, u.username, at.name, a.status, a.comments, a.file_path, a.created_at " \
+            "FROM applications a " \
+            "JOIN users u ON a.student_id = u.id " \
+            "JOIN application_types at ON a.type_id = at.id"
+    filters = []
+
+    if status_filter:
+        query += " WHERE a.status = ?"
+        filters.append(status_filter)
+    
+    if student_name_filter:
+        if filters:
+            query += " AND u.username LIKE ?"
+        else:
+            query += " WHERE u.username LIKE ?"
+        filters.append(f'%{student_name_filter}%')
+
+    cursor.execute(query, tuple(filters))
     applications = cursor.fetchall()
 
     conn.close()

@@ -24,7 +24,6 @@ def add_user(username, password, role):
     return True
 
 def get_all_users():
-    """Получить список всех пользователей."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute("SELECT id, username, role FROM users")
@@ -33,7 +32,6 @@ def get_all_users():
     return users
 
 def get_user_by_id(user_id):
-    """Получить данные пользователя по ID."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute("SELECT id, username, role FROM users WHERE id = ?", (user_id,))
@@ -42,7 +40,6 @@ def get_user_by_id(user_id):
     return user
 
 def update_user(user_id, username, password, role):
-    """Обновить данные пользователя."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute("""
@@ -54,14 +51,9 @@ def update_user(user_id, username, password, role):
     conn.close()
 
 def delete_user(user_id):
-    """Удалить пользователя и сбросить автоинкремент."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    # Удаляем пользователя
     cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
-    conn.commit()
-    # Сбрасываем автоинкремент
-    cursor.execute("DELETE FROM sqlite_sequence WHERE name = 'users'")
     conn.commit()
     conn.close()
 
@@ -89,8 +81,6 @@ def delete_type(type_id):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute("DELETE FROM application_types WHERE id = ?", (type_id,))
-    conn.commit()
-    cursor.execute("DELETE FROM sqlite_sequence WHERE name = 'application_types'")
     conn.commit()
     conn.close()
 

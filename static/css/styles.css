@@ -339,3 +339,30 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+    min-height: 0; /* Гарантирует, что основной контент можно прокручивать */
+}
+
+footer {
+    background-color: #002a80;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.container {
+    padding-bottom: 20px; /* Добавьте отступ, чтобы контент не прилипал к футеру */
+    overflow-y: auto; /* Разрешает прокрутку, если содержимое больше экрана */
+}
